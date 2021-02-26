@@ -1,138 +1,199 @@
-# state file generated using paraview version 5.9.0
-
-#### import the simple module from the paraview
-from paraview.simple import *
-#### disable automatic camera reset on 'Show'
-paraview.simple._DisableFirstRenderCameraReset()
-
-# ----------------------------------------------------------------
-# setup views used in the visualization
-# ----------------------------------------------------------------
-
-# get the material library
-materialLibrary1 = GetMaterialLibrary()
-
-# Create a new 'Render View'
-renderView1 = CreateView('RenderView')
-renderView1.ViewSize = [1508, 796]
-renderView1.AxesGrid = 'GridAxes3DActor'
-renderView1.CenterOfRotation = [-250.0, 650.0, 250.0]
-renderView1.StereoType = 'Crystal Eyes'
-renderView1.CameraPosition = [-1680.9509142204101, 813.2317829011165, 1101.3359923199264]
-renderView1.CameraFocalPoint = [-250.0, 650.0, 250.0]
-renderView1.CameraViewUp = [0.5062322431092422, -0.05187115528468367, 0.8608358143606814]
-renderView1.CameraFocalDisk = 1.0
-renderView1.CameraParallelScale = 433.0127018922193
-renderView1.BackEnd = 'OSPRay raycaster'
-renderView1.OSPRayMaterialLibrary = materialLibrary1
-
-SetActiveView(None)
-
-# ----------------------------------------------------------------
-# setup view layouts
-# ----------------------------------------------------------------
-
-# create new layout object 'Layout #1'
-layout1 = CreateLayout(name='Layout #1')
-layout1.AssignView(0, renderView1)
-layout1.SetSize(1508, 796)
-
-# ----------------------------------------------------------------
-# restore active view
-SetActiveView(renderView1)
-# ----------------------------------------------------------------
-
-# ----------------------------------------------------------------
-# setup the data processing pipelines
-# ----------------------------------------------------------------
-
-# create a new 'Legacy VTK Reader'
-canary_67p50_20p00_isosurfaces_shear_0p01vtk = LegacyVTKReader(registrationName='canary_67p50_20p00_isosurfaces_shear_0p01.vtk', FileNames=['C:/Users/lipb1/Documents/Year 3 Bristol/MDM3/Zenotech/Cuboid Primitives Compression/Isosurfaces/Shear/canary_67p50_20p00_isosurfaces_shear_0p01.vtk'])
-
-# create a new 'PVD Reader'
-canary_67p50_10p00_symmetrypvd = PVDReader(registrationName='canary_67p50_10p00_symmetry.pvd', FileName='C:/Users/lipb1/Documents/Year 3 Bristol/MDM3/Zenotech/Cuboid Primitives Compression/Isosurfaces/Volumes/canary_67p50_10p00_P10_OUTPUT/canary_67p50_10p00_symmetry.pvd')
-canary_67p50_10p00_symmetrypvd.CellArrays = ['zone', 'V', 'p', 'T', 'yplus']
-
-# create a new 'Legacy VTK Reader'
-canary_67p50_10p00_isosurfaces_windspeed_1p0vtk = LegacyVTKReader(registrationName='canary_67p50_10p00_isosurfaces_windspeed_1p0.vtk', FileNames=['C:/Users/lipb1/Documents/Year 3 Bristol/MDM3/Zenotech/Cuboid Primitives Compression/Isosurfaces/Windspeed/canary_67p50_10p00_isosurfaces_windspeed_1p0.vtk'])
-
-# create a new 'PVD Reader'
-canary_67p50_10p00pvd = PVDReader(registrationName='canary_67p50_10p00.pvd', FileName='C:/Users/lipb1/Documents/Year 3 Bristol/MDM3/Zenotech/Cuboid Primitives Compression/Isosurfaces/Volumes/canary_67p50_10p00_P10_OUTPUT/canary_67p50_10p00.pvd')
-canary_67p50_10p00pvd.CellArrays = ['cellvolume', 'V', 'p', 'T', 'eddy']
-
-# create a new 'Cell Data to Point Data'
-cellDatatoPointData1 = CellDatatoPointData(registrationName='CellDatatoPointData1', Input=canary_67p50_10p00pvd)
-
-# create a new 'Wavelet'
-wavelet1 = Wavelet(registrationName='Wavelet1')
-wavelet1.WholeExtent = [0, 50, 0, 50, 0, 50]
-wavelet1.XFreq = 1.0
-wavelet1.YFreq = 1.0
-wavelet1.ZFreq = 1.0
-wavelet1.XMag = 0.0
-wavelet1.ZMag = 0.0
-
-# create a new 'Transform'
-transform1 = Transform(registrationName='Transform1', Input=wavelet1)
-transform1.Transform = 'Transform'
-
-# init the 'Transform' selected for 'Transform'
-transform1.Transform.Scale = [10.0, 10.0, 10.0]
-
-# create a new 'Transform'
-transform2 = Transform(registrationName='Transform2', Input=transform1)
-transform2.Transform = 'Transform'
-
-# init the 'Transform' selected for 'Transform'
-transform2.Transform.Translate = [-500.0, 400.0, 0.0]
-
-# create a new 'Resample With Dataset'
-resampleWithDataset1 = ResampleWithDataset(registrationName='ResampleWithDataset1', SourceDataArrays=cellDatatoPointData1,
-    DestinationMesh=transform2)
-resampleWithDataset1.CellLocator = 'Static Cell Locator'
-
-# ----------------------------------------------------------------
-# setup the visualization in view 'renderView1'
-# ----------------------------------------------------------------
-
-# show data from resampleWithDataset1
-resampleWithDataset1Display = Show(resampleWithDataset1, renderView1, 'StructuredGridRepresentation')
-
-# trace defaults for the display properties.
-resampleWithDataset1Display.Representation = 'Wireframe'
-resampleWithDataset1Display.ColorArrayName = ['POINTS', '']
-resampleWithDataset1Display.SelectTCoordArray = 'None'
-resampleWithDataset1Display.SelectNormalArray = 'None'
-resampleWithDataset1Display.SelectTangentArray = 'None'
-resampleWithDataset1Display.OSPRayScaleArray = 'cellvolume'
-resampleWithDataset1Display.OSPRayScaleFunction = 'PiecewiseFunction'
-resampleWithDataset1Display.SelectOrientationVectors = 'None'
-resampleWithDataset1Display.ScaleFactor = 50.0
-resampleWithDataset1Display.SelectScaleArray = 'cellvolume'
-resampleWithDataset1Display.GlyphType = 'Arrow'
-resampleWithDataset1Display.GlyphTableIndexArray = 'cellvolume'
-resampleWithDataset1Display.GaussianRadius = 2.5
-resampleWithDataset1Display.SetScaleArray = ['POINTS', 'cellvolume']
-resampleWithDataset1Display.ScaleTransferFunction = 'PiecewiseFunction'
-resampleWithDataset1Display.OpacityArray = ['POINTS', 'cellvolume']
-resampleWithDataset1Display.OpacityTransferFunction = 'PiecewiseFunction'
-resampleWithDataset1Display.DataAxesGrid = 'GridAxesRepresentation'
-resampleWithDataset1Display.PolarAxes = 'PolarAxesRepresentation'
-resampleWithDataset1Display.ScalarOpacityUnitDistance = 17.32050807568877
-
-# init the 'PiecewiseFunction' selected for 'ScaleTransferFunction'
-resampleWithDataset1Display.ScaleTransferFunction.Points = [0.0, 0.0, 0.5, 0.0, 125000.0, 1.0, 0.5, 0.0]
-
-# init the 'PiecewiseFunction' selected for 'OpacityTransferFunction'
-resampleWithDataset1Display.OpacityTransferFunction.Points = [0.0, 0.0, 0.5, 0.0, 125000.0, 1.0, 0.5, 0.0]
-
-# ----------------------------------------------------------------
-# restore active source
-SetActiveSource(resampleWithDataset1)
-# ----------------------------------------------------------------
+import pandas as pd
+from mpl_toolkits import mplot3d
+import numpy as np
+import matplotlib.pyplot as plt
+import visualisingCuboids
 
 
-if __name__ == '__main__':
-    # generate extracts
-    SaveExtracts(ExtractsOutputDirectory='extracts')
+# returns a boolean identifying if a point is hazardous to fly in or not
+def isDangerous(xyz, dangerousArray):
+    if xyz in dangerousArray:
+        return True
 
+    else:
+        return False
+
+
+# attempts to group cubes together into cuboids. outputs a 2d array
+# format: [[bottom corner of cuboid XYZ][opposite corner of cuboid XYZ]]
+def createCuboid(startXYZ, xArray, yArray, zArray):
+    dimensionEndFound = False
+    # iterate through all the x from the starting x until a safe cube is found. Then save last known dangerous cube as
+    # the end of the x cuboid
+    for X in range(startXYZ[0], XArray[-1]+5, 5):
+        if not isDangerous([X, startXYZ[1], startXYZ[2]], xyzDangerous) or inCuboid([X, startXYZ[1], startXYZ[2]], cuboidArray):
+            xEnd = X - 5
+            dimensionEndFound = True
+            break
+
+    # if no safe cube is found then the cuboid must span the entire x dimension for this row.
+    if not dimensionEndFound:
+        xEnd = xArray[-1]
+
+    # reset for Y dimension
+    dimensionEndFound = False
+    # iterate across each X for each Y value.
+    # Only increase yEnd if all the dangerous y cubes align with shape of x cubes
+    for Y in range(startXYZ[1], YArray[-1]+5, 5):
+        for X in range(startXYZ[0], xEnd+5, 5):
+            if not isDangerous([X, Y, startXYZ[2]], xyzDangerous) or inCuboid([X, Y, startXYZ[2]], cuboidArray):
+                yEnd = Y - 5
+                dimensionEndFound = True
+                break
+
+        if dimensionEndFound:
+            break
+
+    # if no safe cube is found then the cuboid must span the entire y dimension also.
+    if not dimensionEndFound:
+        yEnd = yArray[-1]
+
+    # reset for Z dimension
+    dimensionEndFound = False
+    # iterate through X and Y limits for each Z value.
+    # Only increase zEnd if all the dangerous z cubes align with shape of x and y cubes
+    for Z in range(startXYZ[2], ZArray[-1]+5, 5):
+        for Y in range(startXYZ[1], yEnd+5, 5):
+            for X in range(startXYZ[0], xEnd+5, 5):
+                if not isDangerous([X, Y, Z], xyzDangerous) or inCuboid([X, Y, Z], cuboidArray):
+                    zEnd = Z - 5
+                    dimensionEndFound = True
+                    break
+            if dimensionEndFound:
+                break
+        if dimensionEndFound:
+            break
+
+    # if all no safe cube is found then the entire z dimension with this x and y are dangerous so are included in cuboid
+    if not dimensionEndFound:
+        zEnd = zArray[-1]
+
+    return [startXYZ, [xEnd, yEnd, zEnd]]
+
+
+# check if a point lies within an existing cuboid. if it does then return True else return false
+def inCuboid(xyz, cuboids):
+    for cuboid in cuboids:
+        if (cuboid[0][0] <= xyz[0] <= cuboid[1][0] and
+                cuboid[0][1] <= xyz[1] <= cuboid[1][1] and
+                cuboid[0][2] <= xyz[2] <= cuboid[1][2]):
+            return True
+
+    return False
+
+
+# return true if in bounds and false if out of bounds
+def checkInBounds(xyz, xyzBound):
+    if xyz[0] >= xyzBound[0]:
+        return False
+
+    elif xyz[1] >= xyzBound[1]:
+        return False
+
+    elif xyz[2] >= xyzBound[2]:
+        return False
+
+    else:
+        return True
+
+
+chunkMax = 50
+
+for chunkNum in range(1, chunkMax):
+    print('\nStarting Compression of chunk ' + str(chunkNum))
+    # read in data from preview
+    df = pd.read_csv('C:/Users/lipb1/Documents/Year 3 Bristol/MDM3/Zenotech/Chunks/Chunk'+str(chunkNum)+'.csv')
+
+    # define a bunch of arrays which are used in the compression process
+    VArray = []
+    xyzDangerous = []
+    xyzSafe = []
+    V0Array = df.loc[:, 'V:0']
+    V1Array = df.loc[:, 'V:1']
+    V2Array = df.loc[:, 'V:2']
+    XArray = df.loc[:, 'Points:0']
+    YArray = df.loc[:, 'Points:1']
+    ZArray = df.loc[:, 'Points:2']
+    buildingFlagArray = df.loc[:, 'vtkValidPointMask']
+    # Set max safe wind speed
+    windSpeedDangerFlag = 5
+
+    # Calculate the magnitude of wind speed at every position
+    for i in range(0, len(V0Array)):
+        VArray.append(np.sqrt(pow(V0Array[i], 2) + pow(V1Array[i], 2) + pow(V2Array[i], 2)))
+
+    # sort safe and dangerous points within the data frame
+    for i in range(0, len(VArray)):
+        if VArray[i] > windSpeedDangerFlag or buildingFlagArray[i] == 0 and checkInBounds([int(XArray[i]), int(YArray[i]), int(ZArray[i])], [1535, 1715, 500]):
+            xyzDangerous.append([int(XArray[i]), int(YArray[i]), int(ZArray[i])])
+
+    newXArray = []
+    newYArray = []
+    newZArray = []
+    for x in range(int(min(XArray)), int(max(XArray))+5, 5):
+        newXArray.append(x)
+
+    for y in range(int(min(YArray)), int(max(YArray))+5, 5):
+        newYArray.append(y)
+
+    for z in range(int(min(ZArray)), int(max(ZArray))+5, 5):
+        newZArray.append(z)
+
+    XArray = newXArray
+    YArray = newYArray
+    ZArray = newZArray
+
+    cuboidArray = []
+    percentageCounter = 0
+
+    for z in ZArray:
+        print("Chunk compression percentage complete: ", percentageCounter, "%")
+        print(len(cuboidArray))
+        for y in YArray:
+            for x in XArray:
+                currentPoint = [x, y, z]
+                if isDangerous(currentPoint, xyzDangerous) and not inCuboid(currentPoint, cuboidArray):
+                    cuboidArray.append(createCuboid(currentPoint, XArray, YArray, ZArray))
+        percentageCounter += 1
+        if z > xyzDangerous[-1][2]:
+            print("Chunk compression percentage complete: 100%")
+            break
+
+    visualisingCuboids.visualiseAndSaveCuboids('compressedChunk'+str(chunkNum), cuboidArray, [int(min(XArray)), int(max(XArray))],
+                                               [int(min(YArray)), int(max(YArray))], [int(min(ZArray)), int(max(ZArray))])
+
+'''
+# visualising data
+xDangerous = []
+yDangerous = []
+zDangerous = []
+for i in range(0, len(xyzDangerous)):
+    xDangerous.append(xyzDangerous[i][0])
+    yDangerous.append(xyzDangerous[i][1])
+    zDangerous.append(xyzDangerous[i][2])
+
+fig = plt.figure()
+ax = plt.axes(projection='3d')
+ax.scatter(xDangerous, yDangerous, zDangerous)
+# ax.plot3D(xDangerous, yDangerous, zDangerous, 'green')
+ax.set_xlabel('X Label')
+ax.set_ylabel('Y Label')
+ax.set_zlabel('Z Label')
+# ax.plot_wireframe(X, Y, Z, color ='green')
+
+
+plt.show()
+'''
+
+'''
+fig = plt.figure()
+ax = plt.axes(projection='3d')
+ax.scatter(xSafe, ySafe, zSafe)
+ax.set_xlabel('X Label')
+ax.set_ylabel('Y Label')
+ax.set_zlabel('Z Label')
+# ax.plot_wireframe(X, Y, Z, color ='green')
+
+
+plt.show()
+'''
