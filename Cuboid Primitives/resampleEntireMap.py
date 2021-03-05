@@ -2,6 +2,7 @@
 
 #### import the simple module from the paraview
 from paraview.simple import *
+import time
 #### disable automatic camera reset on 'Show'
 paraview.simple._DisableFirstRenderCameraReset()
 
@@ -46,9 +47,10 @@ SetActiveView(renderView1)
 # setup the data processing pipelines
 # ----------------------------------------------------------------
 
+cubeSize = 4.0
 # create a new 'Wavelet'
 wavelet1 = Wavelet(registrationName='Wavelet1')
-wavelet1.WholeExtent = [0, 100, 0, 100, 0, 100]
+wavelet1.WholeExtent = [0, 125, 0, 125, 0, 125]
 wavelet1.XFreq = 10.0
 wavelet1.YFreq = 10.0
 wavelet1.ZFreq = 10.0
@@ -69,17 +71,18 @@ transform1 = Transform(registrationName='Transform1', Input=wavelet1)
 transform1.Transform = 'Transform'
 
 # init the 'Transform' selected for 'Transform'
-transform1.Transform.Scale = [5.0, 5.0, 5.0]
+transform1.Transform.Scale = [cubeSize, cubeSize, cubeSize]
 
 # create a new 'Transform'
 transform2 = Transform(registrationName='Transform2', Input=transform1)
 transform2.Transform = 'Transform'
 
 
-root = 'C:/Users/lipb1/Documents/Year 3 Bristol/MDM3/Zenotech/Chunks/'
+root = 'C:/Users/lipb1/Documents/Year 3 Bristol/MDM3/Zenotech/Chunks4mCubes/'
 chunkCounter = 1
 for Y in range(-1735, 1765, int(wavelet1.WholeExtent[1] * transform1.Transform.Scale[0])):
     for X in range(-1570, 1930, int(wavelet1.WholeExtent[3] * transform1.Transform.Scale[1])):
+        start_time = time.time()
         transform2.Transform.Translate = [X, Y, 0.0]
         transform2.Transform.Scale = [1.0, 1.0, 1.0]
         regName = 'ResampleWithDataset'
@@ -89,10 +92,10 @@ for Y in range(-1735, 1765, int(wavelet1.WholeExtent[1] * transform1.Transform.S
                                                    DestinationMesh=transform2)
         resampleWithDataset1.CellLocator = 'Static Cell Locator'
 
-
         sampleName = root + 'Chunk' + str(chunkCounter) + '.csv'
         SaveData(sampleName, resampleWithDataset1, Precision=5, FieldAssociation='Point Data')
         chunkCounter += 1
+        print("Chunk sample time: ", time.time() - start_time)
 
 
 if __name__ == '__main__':

@@ -2,6 +2,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import colors as colours
 import csv
 
 
@@ -29,35 +30,43 @@ def plotCubeAt2(positions, sizes=None, colors=None, **kwargs):
                             facecolors=np.repeat(colors, 6), **kwargs)
 
 
-def visualiseAndSaveCuboids(chunkName, cuboidArray, xBounds, yBounds, zBounds, save=True):
-    print(len(cuboidArray))
-    positions = []
-    sizes = []
-    for cuboid in cuboidArray:
-        positions.append([cuboid[0][0] - 2.5, cuboid[0][1] - 2.5, cuboid[0][2] - 2.5])
-        lengthX = (cuboid[1][0] - cuboid[0][0]) + 5
-        lengthY = (cuboid[1][1] - cuboid[0][1]) + 5
-        lengthZ = (cuboid[1][2] - cuboid[0][2]) + 5
-        sizes.append([lengthX, lengthY, lengthZ])
+def visualiseAndSaveCuboids(chunkName, cuboidArray, xBounds, yBounds, zBounds, cubeSize, save=True, visualise=True):
 
-    fig = plt.figure()
-    ax = fig.gca(projection='3d')
+    if visualise:
+        positions = []
+        sizes = []
+        for cuboid in cuboidArray:
+            positions.append([cuboid[0][0] - (cubeSize/2), cuboid[0][1] - (cubeSize/2), cuboid[0][2] - (cubeSize/2)])
+            lengthX = (cuboid[1][0] - cuboid[0][0]) + cubeSize
+            lengthY = (cuboid[1][1] - cuboid[0][1]) + cubeSize
+            lengthZ = (cuboid[1][2] - cuboid[0][2]) + cubeSize
+            sizes.append([lengthX, lengthY, lengthZ])
 
-    pc = plotCubeAt2(positions, sizes, edgecolor="k")
-    ax.add_collection3d(pc)
+        fig = plt.figure()
+        ax = fig.gca(projection='3d')
 
-    ax.set_xlim(xBounds)
-    ax.set_ylim(yBounds)
-    ax.set_zlim(zBounds)
-    ax.set_xlabel('X Label')
-    ax.set_ylabel('Y Label')
-    ax.set_zlabel('Z Label')
+        pc = plotCubeAt2(positions, sizes, edgecolor="k", colors=colours)
+        ax.add_collection3d(pc)
 
-    plt.show()
+        xBounds[0] -= cubeSize
+        zBounds[0] -= cubeSize
+        yBounds[0] -= cubeSize
+        xBounds[1] += cubeSize
+        zBounds[1] += cubeSize
+        yBounds[1] += cubeSize
+
+        ax.set_xlim(xBounds)
+        ax.set_ylim(yBounds)
+        ax.set_zlim(zBounds)
+        ax.set_xlabel('X Label')
+        ax.set_ylabel('Y Label')
+        ax.set_zlabel('Z Label')
+
+        plt.show()
 
     if save:
         header = ['startXYZ', 'endXYZ']
-        with open('compressedChunks/'+chunkName+'.csv', 'w', encoding='UTF8', newline='') as f:
+        with open('compressedChunks'+str(cubeSize)+'mCubes/'+chunkName+'.csv', 'w', encoding='UTF8', newline='') as f:
             writer = csv.writer(f)
 
             writer.writerow(header)
