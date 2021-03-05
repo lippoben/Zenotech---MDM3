@@ -23,7 +23,7 @@ def run_local(filename):
     print("load time:", time.time() - s)
     s = time.time()
 
-    root = AABB(centre=np.array([0, 0, 0]), size=np.array([512, 512, 512]))
+    root = AABB(centre=np.array([0, 0, 0]), size=np.array([2048，2048，2048]))
     occupied = voxelize(stl, root, 10)
 
     print("occupied time:", time.time() - s)
